@@ -9,12 +9,15 @@ type Props = {
   delay?: number;
   stagger?: number;
   duration?: number;
-  once?: boolean;
 };
 
 /**
  * Editorial per-character reveal. Each glyph is clipped to its own column and
  * slides up from below the baseline with a strong ease-out, staggered.
+ *
+ * Uses `animate` (fires on mount) rather than `whileInView` so it works
+ * reliably for content that is already in the viewport at page load
+ * (e.g. the Hero section).
  */
 export function RevealChars({
   text,
@@ -22,7 +25,6 @@ export function RevealChars({
   delay = 0,
   stagger = 0.06,
   duration = 1.4,
-  once = true,
 }: Props) {
   const chars = Array.from(text);
   return (
@@ -31,13 +33,12 @@ export function RevealChars({
         <span
           key={`${c}-${i}`}
           aria-hidden="true"
-          className="relative inline-block overflow-hidden"
+          className="relative inline-block overflow-hidden align-baseline"
           style={{ lineHeight: 0.86 }}
         >
           <motion.span
             initial={{ y: "115%", opacity: 0 }}
-            whileInView={{ y: "0%", opacity: 1 }}
-            viewport={{ once, margin: "-10% 0px" }}
+            animate={{ y: "0%", opacity: 1 }}
             transition={{
               duration,
               ease: [0.16, 1, 0.3, 1],
@@ -46,7 +47,7 @@ export function RevealChars({
             }}
             className="inline-block will-change-transform"
           >
-            {c === " " ? " " : c}
+            {c === " " ? " " : c}
           </motion.span>
         </span>
       ))}
