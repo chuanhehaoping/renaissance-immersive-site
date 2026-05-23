@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #f6f1e7;
+  --bg-warm: #fbf8f1;
+  --bg-parchment: #efe3cc;
+  --ink: #1f1a14;
+  --ink-soft: #3d3528;
+  --gold: #b68a3d;
+  --pale-gold: #d9b873;
+  --hairline: rgba(31, 26, 20, 0.14);
+  --hairline-gold: rgba(182, 138, 61, 0.35);
+  color-scheme: light;
+}
+
+html,
+body {
+  background: var(--bg-base);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  font-feature-settings:
+    "ss01" 1,
+    "calt" 1,
+    "kern" 1;
+}
+
+::selection {
+  background: rgba(182, 138, 61, 0.28);
+  color: var(--ink);
+}
+
+/* Lenis recommended styles */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* hairline rule */
+.hairline {
+  background: linear-gradient(90deg, transparent, var(--hairline-gold), transparent);
+  height: 1px;
+}
+
+/* parchment + marble background composite (placeholder texture) */
+.bg-parchment-marble {
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(at 12% 8%, rgba(217, 184, 115, 0.22), transparent 55%),
+    radial-gradient(at 88% 22%, rgba(198, 143, 138, 0.18), transparent 55%),
+    radial-gradient(at 78% 92%, rgba(122, 106, 142, 0.12), transparent 60%),
+    radial-gradient(at 8% 88%, rgba(182, 138, 61, 0.12), transparent 60%);
+}
+
+/* placeholder frame for missing imagery */
+.placeholder-frame {
+  position: relative;
+  background:
+    radial-gradient(140% 90% at 30% 30%, rgba(251, 248, 241, 0.95), rgba(239, 227, 204, 0.85) 55%, rgba(201, 195, 184, 0.85) 100%),
+    linear-gradient(135deg, rgba(217, 184, 115, 0.12), rgba(122, 106, 142, 0.08));
+  background-blend-mode: normal, screen;
+}
+.placeholder-frame::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(182, 138, 61, 0.4);
+  pointer-events: none;
+}
+.placeholder-frame::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(31, 26, 20, 0.08);
+  pointer-events: none;
+}
+
+/* serif drop letter */
+.drop-cap::first-letter {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 500;
+  float: left;
+  font-size: 4.6em;
+  line-height: 0.86;
+  padding-right: 0.12em;
+  padding-top: 0.06em;
+  color: var(--gold);
+}
+
+/* reveal masks */
+.reveal-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.reveal-line > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-slow-drift,
+  .animate-fade-up {
+    animation: none !important;
+  }
+}
+
+/* canvas layer */
+.webgl-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.section-shell {
+  position: relative;
+  z-index: 1;
+}
