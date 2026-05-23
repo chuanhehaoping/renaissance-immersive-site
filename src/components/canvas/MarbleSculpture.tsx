@@ -121,7 +121,7 @@ export function MarbleSculpture({ quality }: Props) {
       </mesh>
 
       {/* Floating crystal orb above the urn */}
-      <Float speed={0.6} rotationIntensity={0} floatIntensity={0.25} floatingRange={[-0.02, 0.02]}>
+      <Float speed={0} rotationIntensity={0} floatIntensity={0} floatingRange={[0, 0]}>
         <mesh ref={orbRef} position={[0, 1.85, 0]}>
           <sphereGeometry args={[0.32, quality === "low" ? 64 : 96, quality === "low" ? 64 : 96]} />
           {quality === "high" ? (
@@ -157,7 +157,7 @@ export function MarbleSculpture({ quality }: Props) {
       </Float>
 
       {/* Gold leaf ring around the orb */}
-      <Float speed={0.6} rotationIntensity={0} floatIntensity={0.25} floatingRange={[-0.02, 0.02]}>
+      <Float speed={0} rotationIntensity={0} floatIntensity={0} floatingRange={[0, 0]}>
         <mesh position={[0, 1.85, 0]} rotation-x={Math.PI / 2 - 0.15}>
           <torusGeometry args={[0.46, 0.007, 24, 240]} />
           <meshStandardMaterial

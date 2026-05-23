@@ -37,8 +37,6 @@ export function SceneContent({ quality }: Props) {
   const progressRef = useRef(0);
   const smoothRef = useRef(0);
   const groupRef = useRef<THREE.Group>(null);
-  const keyLightRef = useRef<THREE.DirectionalLight>(null);
-  const rimLightRef = useRef<THREE.DirectionalLight>(null);
 
   useEffect(() => {
     const unsub = subscribeScrollProgress((p) => {
@@ -71,19 +69,8 @@ export function SceneContent({ quality }: Props) {
     const lz = a.look[2] + (b.look[2] - a.look[2]) * e;
     camera.lookAt(lx, ly, lz);
 
-    // Gentle global breathing — barely perceptible
-    if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(performance.now() / 14000) * 0.03;
-    }
-
-    // Key light color drifts toward violet/blue near Technology, warm gold near Hero/Final
-    if (keyLightRef.current) {
-      const tech = Math.max(0, 1 - Math.abs(p - 0.62) * 6);
-      const r = THREE.MathUtils.lerp(1.0, 0.94, tech);
-      const g = THREE.MathUtils.lerp(0.94, 0.9, tech);
-      const bl = THREE.MathUtils.lerp(0.78, 0.96, tech);
-      keyLightRef.current.color.setRGB(r, g, bl);
-    }
+    // No per-frame group motion. No per-frame light color shifts. The scene
+    // is visually static; only the scroll-driven camera moves through it.
   });
 
   return (
@@ -91,23 +78,11 @@ export function SceneContent({ quality }: Props) {
       {/* Three-point lighting */}
       <ambientLight intensity={0.28} color="#FBF8F1" />
       <directionalLight
-        ref={keyLightRef}
-        castShadow
         position={[3.2, 4.6, 2.4]}
         intensity={1.05}
         color="#F3DDB0"
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-near={0.5}
-        shadow-camera-far={20}
-        shadow-camera-left={-5}
-        shadow-camera-right={5}
-        shadow-camera-top={5}
-        shadow-camera-bottom={-5}
-        shadow-bias={-0.0005}
       />
       <directionalLight
-        ref={rimLightRef}
         position={[-3.5, 2.2, -2.6]}
         intensity={0.3}
         color="#CFDAF0"

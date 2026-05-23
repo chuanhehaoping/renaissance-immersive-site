@@ -2,12 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import {
-  Environment,
-  AdaptiveDpr,
-  PerformanceMonitor,
-  ContactShadows,
-} from "@react-three/drei";
+import { Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { SceneContent } from "./SceneContent";
 import { Postprocessing } from "./Postprocessing";
@@ -18,18 +13,19 @@ type Props = {
 
 export function SceneRoot({ quality }: Props) {
   const [mounted, setMounted] = useState(false);
-  const [degraded, setDegraded] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
-  const useHQ = quality === "high" && !degraded;
+  const useHQ = quality === "high";
 
   return (
     <Canvas
-      dpr={useHQ ? [1, 1.75] : [1, 1.25]}
-      shadows={useHQ ? "soft" : false}
+      // Pin DPR — no AdaptiveDpr resizing that can read as flicker.
+      dpr={useHQ ? 1.5 : 1.0}
+      // Real-time shadow maps OFF — ContactShadows handles ground contact, baked once.
+      shadows={false}
       gl={{
-        antialias: false, // SMAA via post handles this on HQ
+        antialias: false,
         alpha: true,
         powerPreference: "high-performance",
         preserveDrawingBuffer: false,
@@ -42,23 +38,19 @@ export function SceneRoot({ quality }: Props) {
       }}
     >
       <fog attach="fog" args={["#F6F1E7", 9, 22]} />
-      <PerformanceMonitor
-        onDecline={() => setDegraded(true)}
-        onIncline={() => setDegraded(false)}
-        bounds={() => [30, 60]}
-      />
-      <AdaptiveDpr pixelated={false} />
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.45} />
         <SceneContent quality={useHQ ? "high" : "low"} />
+        {/* frames={1} bakes the shadow once and reuses it — no per-frame redraw */}
         <ContactShadows
           position={[0, -1.18, 0]}
-          opacity={0.42}
+          opacity={0.34}
           scale={8}
-          blur={2.6}
+          blur={2.8}
           far={4}
           resolution={useHQ ? 1024 : 512}
           color="#1F1A14"
+          frames={1}
         />
         {useHQ && <Postprocessing />}
       </Suspense>
