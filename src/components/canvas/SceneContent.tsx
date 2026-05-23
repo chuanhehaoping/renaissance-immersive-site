@@ -89,12 +89,12 @@ export function SceneContent({ quality }: Props) {
   return (
     <group ref={groupRef}>
       {/* Three-point lighting */}
-      <ambientLight intensity={0.35} color="#FBF8F1" />
+      <ambientLight intensity={0.28} color="#FBF8F1" />
       <directionalLight
         ref={keyLightRef}
         castShadow
         position={[3.2, 4.6, 2.4]}
-        intensity={1.6}
+        intensity={1.05}
         color="#F3DDB0"
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
@@ -109,10 +109,10 @@ export function SceneContent({ quality }: Props) {
       <directionalLight
         ref={rimLightRef}
         position={[-3.5, 2.2, -2.6]}
-        intensity={0.45}
+        intensity={0.3}
         color="#CFDAF0"
       />
-      <hemisphereLight args={["#FBF8F1", "#C9C3B8", 0.22]} />
+      <hemisphereLight args={["#FBF8F1", "#C9C3B8", 0.18]} />
 
       <Archway quality={quality} />
       <SceneFloor quality={quality} />

@@ -37,7 +37,7 @@ export function SceneRoot({ quality }: Props) {
       camera={{ position: [0, 0.2, 4.6], fov: 38, near: 0.1, far: 60 }}
       onCreated={({ gl, scene }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.05;
+        gl.toneMappingExposure = 0.92;
         scene.background = new THREE.Color("#F6F1E7");
       }}
     >
@@ -49,7 +49,7 @@ export function SceneRoot({ quality }: Props) {
       />
       <AdaptiveDpr pixelated={false} />
       <Suspense fallback={null}>
-        <Environment preset="studio" environmentIntensity={0.6} />
+        <Environment preset="studio" environmentIntensity={0.45} />
         <SceneContent quality={useHQ ? "high" : "low"} />
         <ContactShadows
           position={[0, -1.18, 0]}

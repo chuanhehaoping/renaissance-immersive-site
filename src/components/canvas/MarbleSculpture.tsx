@@ -83,15 +83,15 @@ export function MarbleSculpture({ quality }: Props) {
         <latheGeometry args={[vesselPoints, segments]} />
         <meshPhysicalMaterial
           map={marbleTexture}
-          color="#F2EDE0"
-          roughness={0.28}
+          color="#EBE4D2"
+          roughness={0.34}
           metalness={0.02}
-          clearcoat={0.55}
-          clearcoatRoughness={0.18}
-          sheen={0.4}
-          sheenRoughness={0.6}
+          clearcoat={0.42}
+          clearcoatRoughness={0.22}
+          sheen={0.28}
+          sheenRoughness={0.7}
           sheenColor="#E8D6B0"
-          envMapIntensity={0.9}
+          envMapIntensity={0.65}
         />
       </mesh>
 
@@ -112,11 +112,11 @@ export function MarbleSculpture({ quality }: Props) {
       <mesh position={[0, 1.04, 0]}>
         <torusGeometry args={[0.62, 0.012, 16, 96]} />
         <meshStandardMaterial
-          color="#D9B873"
+          color="#C8A05E"
           metalness={1}
-          roughness={0.22}
-          emissive="#B68A3D"
-          emissiveIntensity={0.15}
+          roughness={0.32}
+          emissive="#8C6A2E"
+          emissiveIntensity={0.08}
         />
       </mesh>
 
@@ -161,11 +161,11 @@ export function MarbleSculpture({ quality }: Props) {
         <mesh position={[0, 1.85, 0]} rotation-x={Math.PI / 2 - 0.15}>
           <torusGeometry args={[0.46, 0.006, 12, 128]} />
           <meshStandardMaterial
-            color="#D9B873"
+            color="#C8A05E"
             metalness={1}
-            roughness={0.18}
-            emissive="#B68A3D"
-            emissiveIntensity={0.25}
+            roughness={0.3}
+            emissive="#8C6A2E"
+            emissiveIntensity={0.12}
           />
         </mesh>
       </Float>
