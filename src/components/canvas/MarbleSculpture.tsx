@@ -127,17 +127,17 @@ export function MarbleSculpture({ quality }: Props) {
           {quality === "high" ? (
             <MeshTransmissionMaterial
               backside
-              backsideThickness={0.5}
-              thickness={0.6}
-              chromaticAberration={0.04}
-              anisotropicBlur={0.08}
-              roughness={0.04}
-              ior={1.45}
-              distortion={0.15}
-              distortionScale={0.5}
-              temporalDistortion={0.05}
+              backsideThickness={0.4}
+              thickness={0.5}
+              chromaticAberration={0.012}
+              anisotropicBlur={0.04}
+              roughness={0.08}
+              ior={1.42}
+              distortion={0.05}
+              distortionScale={0.3}
+              temporalDistortion={0}
               transmission={1}
-              clearcoat={1}
+              clearcoat={0.8}
               attenuationColor="#FBF6E8"
               attenuationDistance={2.5}
               color="#FBF8F1"

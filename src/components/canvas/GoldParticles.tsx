@@ -34,10 +34,11 @@ export function GoldParticles({ count = 520 }: { count?: number }) {
     const sizes = new Float32Array(count);
     for (let i = 0; i < count; i++) {
       positions[i * 3 + 0] = (Math.random() - 0.5) * 11;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 8;
+      // keep particles in the upper half of the room only
+      positions[i * 3 + 1] = -0.4 + Math.random() * 4.2;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 6 - 1;
-      speeds[i] = 0.04 + Math.random() * 0.18;
-      sizes[i] = 0.5 + Math.pow(Math.random(), 2.4) * 2.2;
+      speeds[i] = 0.02 + Math.random() * 0.08;
+      sizes[i] = 0.6 + Math.pow(Math.random(), 3.0) * 1.6;
     }
     return { positions, speeds, sizes };
   }, [count]);
@@ -46,12 +47,12 @@ export function GoldParticles({ count = 520 }: { count?: number }) {
     if (!ref.current) return;
     const geom = ref.current.geometry as THREE.BufferGeometry;
     const arr = geom.attributes.position.array as Float32Array;
-    const t = performance.now() / 4500;
+    const t = performance.now() / 6500;
     for (let i = 0; i < count; i++) {
-      arr[i * 3 + 1] += speeds[i] * delta * 0.42;
-      arr[i * 3 + 0] += Math.sin(t + i * 0.31) * delta * 0.05;
-      if (arr[i * 3 + 1] > 4) {
-        arr[i * 3 + 1] = -4;
+      arr[i * 3 + 1] += speeds[i] * delta * 0.22;
+      arr[i * 3 + 0] += Math.sin(t + i * 0.31) * delta * 0.025;
+      if (arr[i * 3 + 1] > 3.8) {
+        arr[i * 3 + 1] = -0.4;
         arr[i * 3 + 0] = (Math.random() - 0.5) * 11;
       }
     }
@@ -77,14 +78,14 @@ export function GoldParticles({ count = 520 }: { count?: number }) {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.075}
+        size={0.055}
         sizeAttenuation
         map={halo ?? undefined}
-        alphaTest={0.02}
+        alphaTest={0.05}
         transparent
-        opacity={0.95}
+        opacity={0.55}
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={THREE.NormalBlending}
       />
     </points>
   );

@@ -13,11 +13,11 @@ export function Postprocessing() {
   return (
     <EffectComposer multisampling={0} enableNormalPass={false}>
       <Bloom
-        intensity={0.32}
-        luminanceThreshold={0.86}
-        luminanceSmoothing={0.2}
+        intensity={0.14}
+        luminanceThreshold={0.95}
+        luminanceSmoothing={0.25}
         mipmapBlur
-        radius={0.55}
+        radius={0.4}
       />
       <BrightnessContrast brightness={-0.01} contrast={0.03} />
       <Vignette

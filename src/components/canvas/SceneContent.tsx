@@ -117,7 +117,7 @@ export function SceneContent({ quality }: Props) {
       <Archway quality={quality} />
       <SceneFloor quality={quality} />
       <MarbleSculpture quality={quality} />
-      <GoldParticles count={quality === "low" ? 180 : 520} />
+      <GoldParticles count={quality === "low" ? 80 : 240} />
     </group>
   );
 }
