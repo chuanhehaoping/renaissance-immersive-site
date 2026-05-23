@@ -7,36 +7,38 @@ import { subscribeScrollProgress } from "@/lib/scrollProgress";
 import { GoldParticles } from "./GoldParticles";
 import { MarbleSculpture } from "./MarbleSculpture";
 import { Archway } from "./Archway";
+import { SceneFloor } from "./SceneFloor";
 
 type Props = { quality: "low" | "high" };
 
+// Camera path threaded through the 8 sections. Looks at the sculpture group,
+// varying angle / height / distance per section.
 const TARGETS: Array<{ pos: [number, number, number]; look: [number, number, number] }> = [
-  // hero
-  { pos: [0, 0.2, 4.6], look: [0, 0.0, 0] },
-  // philosophy
-  { pos: [-1.3, 0.4, 3.4], look: [0.2, 0.1, 0] },
-  // collection
-  { pos: [1.2, 0.0, 3.0], look: [0, -0.1, 0] },
-  // craft
-  { pos: [0.0, -0.4, 2.4], look: [0, 0.0, 0] },
-  // experience
-  { pos: [-0.6, 0.3, 2.0], look: [0, 0.2, -0.4] },
-  // technology
-  { pos: [0.8, 0.5, 2.2], look: [0, 0.0, 0] },
-  // gallery
-  { pos: [0.0, 0.7, 3.6], look: [0, 0.0, 0] },
-  // final cta
-  { pos: [0.0, 1.3, 4.4], look: [0, 1.0, 0] },
+  // I  hero — front, slightly above
+  { pos: [0.0, 0.35, 4.4], look: [0, 0.3, 0] },
+  // II philosophy — gentle drift left
+  { pos: [-1.4, 0.5, 3.6], look: [0.1, 0.3, 0] },
+  // III collection — drift right & lower
+  { pos: [1.6, 0.1, 3.3], look: [0, 0.1, 0] },
+  // IV craft — close in, low
+  { pos: [0.2, -0.25, 2.6], look: [0, 0.0, 0] },
+  // V experience — left, slight curtain framing
+  { pos: [-0.9, 0.4, 2.4], look: [0, 0.4, -0.3] },
+  // VI technology — right, lift, focus on orb
+  { pos: [1.1, 0.9, 2.6], look: [0, 0.8, 0] },
+  // VII gallery — pull back & up
+  { pos: [0.0, 1.0, 3.9], look: [0, 0.5, 0] },
+  // VIII final cta — tilt upward
+  { pos: [0.0, 1.6, 4.2], look: [0, 1.4, 0] },
 ];
 
 export function SceneContent({ quality }: Props) {
   const { camera } = useThree();
   const progressRef = useRef(0);
-  const groupRef = useRef<THREE.Group>(null);
-  const lightRef = useRef<THREE.DirectionalLight>(null);
-
-  // Smoothed progress
   const smoothRef = useRef(0);
+  const groupRef = useRef<THREE.Group>(null);
+  const keyLightRef = useRef<THREE.DirectionalLight>(null);
+  const rimLightRef = useRef<THREE.DirectionalLight>(null);
 
   useEffect(() => {
     const unsub = subscribeScrollProgress((p) => {
@@ -50,7 +52,6 @@ export function SceneContent({ quality }: Props) {
   const targets = useMemo(() => TARGETS, []);
 
   useFrame((_, delta) => {
-    // smooth scroll-driven progress
     smoothRef.current += (progressRef.current - smoothRef.current) * Math.min(1, delta * 3);
     const p = smoothRef.current;
 
@@ -61,7 +62,6 @@ export function SceneContent({ quality }: Props) {
     const a = targets[idx];
     const b = targets[Math.min(idx + 1, targets.length - 1)];
 
-    // ease the segment
     const e = 1 - Math.pow(1 - t, 3);
     camera.position.x = a.pos[0] + (b.pos[0] - a.pos[0]) * e;
     camera.position.y = a.pos[1] + (b.pos[1] - a.pos[1]) * e;
@@ -71,37 +71,53 @@ export function SceneContent({ quality }: Props) {
     const lz = a.look[2] + (b.look[2] - a.look[2]) * e;
     camera.lookAt(lx, ly, lz);
 
-    // gentle global drift
+    // Gentle global breathing — barely perceptible
     if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(performance.now() / 12000) * 0.06 + p * 0.7;
+      groupRef.current.rotation.y = Math.sin(performance.now() / 14000) * 0.03;
     }
 
-    // gold light shifts toward violet/blue around technology section
-    if (lightRef.current) {
-      const tech = Math.max(0, 1 - Math.abs(p - 0.6) * 8);
-      const final = Math.max(0, 1 - Math.abs(p - 0.95) * 8);
-      const r = THREE.MathUtils.lerp(1.0, 0.92, tech);
-      const g = THREE.MathUtils.lerp(0.92, 0.86, tech);
-      const bl = THREE.MathUtils.lerp(0.74, 0.92, tech) + final * 0.05;
-      lightRef.current.color.setRGB(r, g, bl);
+    // Key light color drifts toward violet/blue near Technology, warm gold near Hero/Final
+    if (keyLightRef.current) {
+      const tech = Math.max(0, 1 - Math.abs(p - 0.62) * 6);
+      const r = THREE.MathUtils.lerp(1.0, 0.94, tech);
+      const g = THREE.MathUtils.lerp(0.94, 0.9, tech);
+      const bl = THREE.MathUtils.lerp(0.78, 0.96, tech);
+      keyLightRef.current.color.setRGB(r, g, bl);
     }
   });
 
   return (
     <group ref={groupRef}>
-      <ambientLight intensity={0.55} color="#FBF8F1" />
+      {/* Three-point lighting */}
+      <ambientLight intensity={0.35} color="#FBF8F1" />
       <directionalLight
-        ref={lightRef}
-        position={[3.5, 4.5, 2]}
-        intensity={1.05}
-        color="#F2DDAF"
+        ref={keyLightRef}
+        castShadow
+        position={[3.2, 4.6, 2.4]}
+        intensity={1.6}
+        color="#F3DDB0"
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-near={0.5}
+        shadow-camera-far={20}
+        shadow-camera-left={-5}
+        shadow-camera-right={5}
+        shadow-camera-top={5}
+        shadow-camera-bottom={-5}
+        shadow-bias={-0.0005}
       />
-      <directionalLight position={[-3, 2, -2]} intensity={0.35} color="#C8D2E8" />
-      <hemisphereLight args={["#FBF8F1", "#C9C3B8", 0.3]} />
+      <directionalLight
+        ref={rimLightRef}
+        position={[-3.5, 2.2, -2.6]}
+        intensity={0.45}
+        color="#CFDAF0"
+      />
+      <hemisphereLight args={["#FBF8F1", "#C9C3B8", 0.22]} />
 
       <Archway quality={quality} />
+      <SceneFloor quality={quality} />
       <MarbleSculpture quality={quality} />
-      <GoldParticles count={quality === "low" ? 220 : 700} />
+      <GoldParticles count={quality === "low" ? 180 : 520} />
     </group>
   );
 }
