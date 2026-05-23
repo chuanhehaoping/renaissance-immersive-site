@@ -15,15 +15,47 @@ type Props = {
   priority?: boolean;
 };
 
+const FALLBACK_EXTS = [".webp", ".avif", ".png", ".jpg", ".jpeg"];
+
+function candidateSrcs(src: string): string[] {
+  const dotIdx = src.lastIndexOf(".");
+  if (dotIdx < 0) return [src];
+  const base = src.slice(0, dotIdx);
+  const original = src.slice(dotIdx);
+  const others = FALLBACK_EXTS.filter((e) => e !== original);
+  return [src, ...others.map((e) => `${base}${e}`)];
+}
+
 export function ImageFrame({ image, caption, className, framed = true, rounded, priority }: Props) {
-  const [available, setAvailable] = useState<"unknown" | "found" | "missing">("unknown");
+  const [resolved, setResolved] = useState<string | null>(null);
+  const [tried, setTried] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const img = new window.Image();
-    img.src = image.src;
-    img.onload = () => setAvailable("found");
-    img.onerror = () => setAvailable("missing");
+    let cancelled = false;
+    const candidates = candidateSrcs(image.src);
+    let i = 0;
+    const tryNext = () => {
+      if (cancelled) return;
+      if (i >= candidates.length) {
+        setTried(true);
+        return;
+      }
+      const url = candidates[i++];
+      const img = new window.Image();
+      img.onload = () => {
+        if (!cancelled) {
+          setResolved(url);
+          setTried(true);
+        }
+      };
+      img.onerror = tryNext;
+      img.src = url;
+    };
+    tryNext();
+    return () => {
+      cancelled = true;
+    };
   }, [image.src]);
 
   return (
@@ -43,9 +75,9 @@ export function ImageFrame({ image, caption, className, framed = true, rounded, 
         )}
         style={{ aspectRatio: image.aspect.replace(" / ", "/") }}
       >
-        {available === "found" ? (
+        {resolved ? (
           <Image
-            src={image.src}
+            src={resolved}
             alt={image.alt}
             fill
             sizes="(max-width: 768px) 100vw, 60vw"
@@ -65,6 +97,7 @@ export function ImageFrame({ image, caption, className, framed = true, rounded, 
           {caption}
         </figcaption>
       ) : null}
+      {tried && !resolved ? null : null}
     </motion.figure>
   );
 }
