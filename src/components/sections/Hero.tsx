@@ -2,45 +2,72 @@
 
 import { motion } from "framer-motion";
 import { HERO_CONTENT } from "@/data/content";
-import { RevealLines } from "@/components/ui/RevealLines";
+import { RevealChars } from "@/components/ui/RevealChars";
 
 export function Hero() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen items-end overflow-hidden pb-20 pt-40 md:items-center md:pt-32"
+      className="relative flex min-h-screen flex-col overflow-hidden pb-16 pt-32 md:pb-20 md:pt-28"
     >
-      <div className="mx-auto grid w-full max-w-editorial grid-cols-12 gap-6 px-6 md:px-10">
-        <div className="col-span-12 md:col-span-9 lg:col-span-8">
+      {/* TOP — kicker */}
+      <div className="mx-auto w-full max-w-editorial px-6 md:px-10">
+        <motion.span
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="flex items-center gap-3 text-[0.72rem] uppercase tracking-roman text-ink-soft"
+        >
           <motion.span
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-3 text-[0.7rem] uppercase tracking-roman text-ink-soft"
-          >
-            <span className="h-px w-10 bg-gold" />
-            {HERO_CONTENT.kicker}
-          </motion.span>
-          <h1 className="mt-8 font-display text-[14vw] leading-[0.88] tracking-tight text-ink md:text-[10vw] lg:text-[8.6vw]">
-            <RevealLines lines={[HERO_CONTENT.headline[0]]} delay={0.3} />
-            <br />
-            <em className="not-italic text-gold">
-              <RevealLines lines={[HERO_CONTENT.headline[1]]} delay={0.5} />
-            </em>
+            initial={{ scaleX: 0, transformOrigin: "left" }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.6, delay: 0.3, ease: [0.65, 0, 0.35, 1] }}
+            className="block h-px w-10 origin-left bg-gold"
+          />
+          {HERO_CONTENT.kicker}
+        </motion.span>
+      </div>
+
+      {/* MIDDLE — oversized brand title flanking the sculpture */}
+      <div className="pointer-events-none mt-10 flex flex-1 items-center md:mt-0">
+        <div className="mx-auto w-full px-4 md:px-10">
+          <h1 className="font-display text-ink">
+            <div className="flex flex-col items-stretch gap-1 md:flex-row md:items-baseline md:justify-between md:gap-0">
+              <span className="block text-left text-[20vw] leading-[0.86] tracking-[-0.02em] md:text-[10.5vw] lg:text-[9.5vw]">
+                <RevealChars text="Atelier" delay={0.55} stagger={0.075} duration={1.5} />
+              </span>
+              <em className="block not-italic text-right text-[20vw] leading-[0.86] tracking-[-0.02em] text-gold md:text-[10.5vw] lg:text-[9.5vw]">
+                <RevealChars text="Lunes" delay={1.05} stagger={0.085} duration={1.6} />
+              </em>
+            </div>
           </h1>
+        </div>
+      </div>
+
+      {/* BOTTOM — subtitle, lede, CTA */}
+      <div className="mx-auto w-full max-w-editorial px-6 md:px-10">
+        <div className="md:max-w-lg">
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10 max-w-md text-base leading-relaxed text-ink-soft md:text-lg"
+            transition={{ duration: 1.6, delay: 1.7, ease: [0.16, 1, 0.3, 1] }}
+            className="font-display text-2xl italic leading-tight text-ink md:text-3xl"
+          >
+            Of marble &amp; quiet light.
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.6, delay: 1.95, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-6 max-w-md text-base leading-relaxed text-ink-soft md:text-lg"
           >
             {HERO_CONTENT.lede}
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10 flex flex-wrap items-center gap-4"
+            transition={{ duration: 1.6, delay: 2.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-8 flex flex-wrap items-center gap-4"
           >
             <a
               href="#philosophy"
@@ -63,9 +90,14 @@ export function Hero() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 text-[0.6rem] uppercase tracking-roman text-ink-soft/70 md:bottom-10">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2.0, delay: 2.6, ease: "linear" }}
+        className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-[0.6rem] uppercase tracking-roman text-ink-soft/70 md:bottom-10"
+      >
         <span className="block animate-slow-drift">— scroll —</span>
-      </div>
+      </motion.div>
     </section>
   );
 }
