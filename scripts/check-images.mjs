@@ -121,7 +121,7 @@ async function main() {
   for (const [id] of EXPECTED) {
     for (const ext of ACCEPTED_EXT) expectedNames.add(`${id}${ext}`);
   }
-  const ignored = new Set([".gitkeep", "_staging"]);
+  const ignored = new Set([".gitkeep", "_staging", "_originals"]);
   const extras = filesOnDisk.filter((f) => !expectedNames.has(f) && !ignored.has(f));
   if (extras.length) {
     console.log(

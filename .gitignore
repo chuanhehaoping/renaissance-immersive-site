@@ -29,6 +29,9 @@ pnpm-debug.log*
 # vercel
 .vercel
 
+# image backups (kept locally, not committed)
+public/images/generated/_originals/
+
 # editor / OS
 .idea
 .vscode/*
