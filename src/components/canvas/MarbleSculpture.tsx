@@ -64,18 +64,10 @@ export function MarbleSculpture({ quality }: Props) {
     [profileSamples],
   );
 
-  useFrame((_, delta) => {
-    if (ref.current) {
-      ref.current.rotation.y += delta * 0.05;
-    }
-    if (inner.current) {
-      inner.current.rotation.y -= delta * 0.02;
-    }
-    if (orbRef.current) {
-      orbRef.current.rotation.y += delta * 0.06;
-      orbRef.current.rotation.x = Math.sin(performance.now() / 6000) * 0.08;
-    }
-  });
+  // No per-frame rotation — the object stays still. Camera motion (driven by
+  // scroll in SceneContent) provides the only perspective change. This kills
+  // the "highlight sliding across the surface" flicker.
+  useFrame(() => {});
 
   return (
     <group ref={ref} position={[0, -0.15, 0]}>
@@ -122,20 +114,14 @@ export function MarbleSculpture({ quality }: Props) {
         </mesh>
       </group>
 
-      {/* Gilt rim around the lip */}
+      {/* Gilt rim around the lip — low metalness so it does not mirror the env */}
       <mesh position={[0, 0.97, 0]}>
         <torusGeometry args={[0.59, 0.014, 24, 192]} />
-        <meshStandardMaterial
-          color="#C8A05E"
-          metalness={1}
-          roughness={0.32}
-          emissive="#8C6A2E"
-          emissiveIntensity={0.08}
-        />
+        <meshStandardMaterial color="#B8965A" metalness={0.35} roughness={0.62} />
       </mesh>
 
       {/* Floating crystal orb above the urn */}
-      <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.5} floatingRange={[-0.04, 0.04]}>
+      <Float speed={0.6} rotationIntensity={0} floatIntensity={0.25} floatingRange={[-0.02, 0.02]}>
         <mesh ref={orbRef} position={[0, 1.85, 0]}>
           <sphereGeometry args={[0.32, quality === "low" ? 64 : 96, quality === "low" ? 64 : 96]} />
           {quality === "high" ? (
@@ -143,15 +129,15 @@ export function MarbleSculpture({ quality }: Props) {
               backside
               backsideThickness={0.4}
               thickness={0.5}
-              chromaticAberration={0.012}
-              anisotropicBlur={0.04}
-              roughness={0.08}
-              ior={1.42}
-              distortion={0.05}
-              distortionScale={0.3}
+              chromaticAberration={0}
+              anisotropicBlur={0.02}
+              roughness={0.18}
+              ior={1.38}
+              distortion={0}
+              distortionScale={0.2}
               temporalDistortion={0}
-              transmission={1}
-              clearcoat={0.8}
+              transmission={0.9}
+              clearcoat={0.4}
               attenuationColor="#FBF6E8"
               attenuationDistance={2.5}
               color="#FBF8F1"
@@ -171,15 +157,15 @@ export function MarbleSculpture({ quality }: Props) {
       </Float>
 
       {/* Gold leaf ring around the orb */}
-      <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.5} floatingRange={[-0.04, 0.04]}>
+      <Float speed={0.6} rotationIntensity={0} floatIntensity={0.25} floatingRange={[-0.02, 0.02]}>
         <mesh position={[0, 1.85, 0]} rotation-x={Math.PI / 2 - 0.15}>
           <torusGeometry args={[0.46, 0.007, 24, 240]} />
           <meshStandardMaterial
-            color="#C8A05E"
-            metalness={1}
-            roughness={0.3}
-            emissive="#8C6A2E"
-            emissiveIntensity={0.12}
+            color="#B8965A"
+            metalness={0.4}
+            roughness={0.55}
+            emissive="#000000"
+            emissiveIntensity={0}
           />
         </mesh>
       </Float>
